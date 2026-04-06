@@ -11,53 +11,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      # ---------------------------
-      # STEP 1 - Checkout Code
-      # ---------------------------
-      - name: 1️⃣ Checkout Repository
+      # --------------------------------
+      # 1. Checkout Repository
+      # --------------------------------
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # ---------------------------
-      # STEP 2 - Install Terraform
-      # ---------------------------
-      - name: 2️⃣ Setup Terraform
+      # --------------------------------
+      # 2. Setup Terraform
+      # --------------------------------
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      # ---------------------------
-      # STEP 3 - Authenticate GCP
-      # ---------------------------
-      - name: 3️⃣ Authenticate to GCP
+      # --------------------------------
+      # 3. Authenticate to GCP
+      # --------------------------------
+      - name: Authenticate to GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      # ---------------------------
-      # STEP 4 - Terraform Init
-      # ---------------------------
-      - name: 4️⃣ Terraform Init
+      # --------------------------------
+      # 4. Terraform Init
+      # --------------------------------
+      - name: Terraform Init
         run: terraform init -reconfigure
 
-      # ---------------------------
-      # STEP 5 - Terraform Format Check
-      # ---------------------------
-      - name: 5️⃣ Terraform Format
-        run: terraform fmt -check
+      # --------------------------------
+      # 5. Terraform Format (auto-fix)
+      # --------------------------------
+      - name: Terraform Format
+        run: terraform fmt -recursive
 
-      # ---------------------------
-      # STEP 6 - Terraform Validate
-      # ---------------------------
-      - name: 6️⃣ Terraform Validate
+      # --------------------------------
+      # 6. Terraform Validate
+      # --------------------------------
+      - name: Terraform Validate
         run: terraform validate
 
-      # ---------------------------
-      # STEP 7 - Terraform Plan
-      # ---------------------------
-      - name: 7️⃣ Terraform Plan
+      # --------------------------------
+      # 7. Terraform Plan
+      # --------------------------------
+      - name: Terraform Plan
         run: terraform plan
 
-      # ---------------------------
-      # STEP 8 - Terraform Apply
-      # ---------------------------
-      - name: 8️⃣ Terraform Apply
+      # --------------------------------
+      # 8. Terraform Apply
+      # --------------------------------
+      - name: Terraform Apply
         run: terraform apply -auto-approve
