@@ -15,62 +15,34 @@ jobs:
         working-directory: terraform
 
     steps:
-
-    # -------------------------------
-    # STEP 1 — TERRAFORM (Checkout)
-    # -------------------------------
     - name: Terraform - Checkout Code
       uses: actions/checkout@v4
 
-    # -------------------------------
-    # STEP 2 — TERRAFORM SETUP
-    # -------------------------------
     - name: Terraform - Install
       uses: hashicorp/setup-terraform@v3
 
-    # -------------------------------
-    # STEP 3 — AUTHENTICATION
-    # -------------------------------
     - name: Terraform - Authenticate GCP
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Terraform - Setup gcloud
       uses: google-github-actions/setup-gcloud@v2
 
-    # -------------------------------
-    # STEP 4 — INITIALIZATION
-    # -------------------------------
     - name: Initialization
       run: terraform init -reconfigure
 
-    # -------------------------------
-    # STEP 5 — FORMAT CHECK (OPTIONAL)
-    # -------------------------------
     - name: Format Validation
       run: terraform fmt -check
 
-    # -------------------------------
-    # STEP 6 — VALIDATE
-    # -------------------------------
     - name: Terraform Validate
       run: terraform validate
 
-    # -------------------------------
-    # STEP 7 — PLAN
-    # -------------------------------
     - name: Terraform Plan
       run: terraform plan -out=tfplan
 
-    # -------------------------------
-    # STEP 8 — APPLY
-    # -------------------------------
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
 
-    # -------------------------------
-    # STEP 9 — PROVISIONED MESSAGE
-    # -------------------------------
     - name: Provisioned ✅
       run: echo "Infrastructure Successfully Provisioned!"
