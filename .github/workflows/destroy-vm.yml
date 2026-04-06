@@ -12,30 +12,31 @@ jobs:
         working-directory: terraform
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-    - name: Authenticate to GCP
-  uses: google-github-actions/auth@v2
-  with:
-    credentials_json: ${{ secrets.GCP_SA_KEY }}
+      # ✅ FIXED INDENTATION
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Setup gcloud
-      uses: google-github-actions/setup-gcloud@v2
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
 
-    - name: Terraform Init
-      run: terraform init -reconfigure
+      - name: Terraform Init
+        run: terraform init -reconfigure
 
-    # ✅ Destroy ONLY VM1
-    - name: Destroy VM1
-      run: terraform destroy -target=google_compute_instance.vm -auto-approve
+      # Destroy VM1 only
+      - name: Destroy VM1
+        run: terraform destroy -target=google_compute_instance.vm -auto-approve
 
-    # ✅ Destroy ONLY VM2
-    - name: Destroy VM2
-      run: terraform destroy -target=google_compute_instance.vm2 -auto-approve
+      # Destroy VM2 only
+      - name: Destroy VM2
+        run: terraform destroy -target=google_compute_instance.vm2 -auto-approve
 
-    - name: Completed
-      run: echo "Only VMs deleted ✅"
+      - name: Completed
+        run: echo "Only VMs deleted ✅"
