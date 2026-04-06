@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: Terraform Deployment Flow
 
 on:
   push:
@@ -10,53 +10,67 @@ jobs:
     name: Terraform Pipeline
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: terraform
+
     steps:
-      # --------------------------------
-      # 1. Checkout Repository
-      # --------------------------------
-      - name: Checkout Repository
-        uses: actions/checkout@v3
 
-      # --------------------------------
-      # 2. Setup Terraform
-      # --------------------------------
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+    # -------------------------------
+    # STEP 1 — TERRAFORM (Checkout)
+    # -------------------------------
+    - name: Terraform - Checkout Code
+      uses: actions/checkout@v4
 
-      # --------------------------------
-      # 3. Authenticate to GCP
-      # --------------------------------
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    # -------------------------------
+    # STEP 2 — TERRAFORM SETUP
+    # -------------------------------
+    - name: Terraform - Install
+      uses: hashicorp/setup-terraform@v3
 
-      # --------------------------------
-      # 4. Terraform Init
-      # --------------------------------
-      - name: Terraform Init
-        run: terraform init -reconfigure
+    # -------------------------------
+    # STEP 3 — AUTHENTICATION
+    # -------------------------------
+    - name: Terraform - Authenticate GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      # --------------------------------
-      # 5. Terraform Format (auto-fix)
-      # --------------------------------
-      - name: Terraform Format
-        run: terraform fmt -recursive
+    - name: Terraform - Setup gcloud
+      uses: google-github-actions/setup-gcloud@v2
 
-      # --------------------------------
-      # 6. Terraform Validate
-      # --------------------------------
-      - name: Terraform Validate
-        run: terraform validate
+    # -------------------------------
+    # STEP 4 — INITIALIZATION
+    # -------------------------------
+    - name: Initialization
+      run: terraform init -reconfigure
 
-      # --------------------------------
-      # 7. Terraform Plan
-      # --------------------------------
-      - name: Terraform Plan
-        run: terraform plan
+    # -------------------------------
+    # STEP 5 — FORMAT CHECK (OPTIONAL)
+    # -------------------------------
+    - name: Format Validation
+      run: terraform fmt -check
 
-      # --------------------------------
-      # 8. Terraform Apply
-      # --------------------------------
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+    # -------------------------------
+    # STEP 6 — VALIDATE
+    # -------------------------------
+    - name: Terraform Validate
+      run: terraform validate
+
+    # -------------------------------
+    # STEP 7 — PLAN
+    # -------------------------------
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+
+    # -------------------------------
+    # STEP 8 — APPLY
+    # -------------------------------
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
+
+    # -------------------------------
+    # STEP 9 — PROVISIONED MESSAGE
+    # -------------------------------
+    - name: Provisioned ✅
+      run: echo "Infrastructure Successfully Provisioned!"
