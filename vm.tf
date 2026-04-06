@@ -16,7 +16,7 @@ resource "google_compute_instance" "vm" {
         }
 
 resource "google_compute_instance" "vm2" {
-  name         = "test-vm-2"
+  name         = "github-created-vm-2"
   machine_type = "e2-micro"
   zone         = "us-central1-a"
 
