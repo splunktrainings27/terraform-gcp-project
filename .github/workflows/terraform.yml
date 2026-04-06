@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Download repository code
+      # Step 1: Checkout repo
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -18,16 +18,20 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      # Step 3: Authenticate to Google Cloud
+      # Step 3: Authenticate to GCP
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      # Step 4: Initialize Terraform
+      # Step 4: Terraform Init (IMPORTANT CHANGE)
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure
 
-      # Step 5: Apply Terraform configuration
+      # Step 5: Terraform Plan (GOOD PRACTICE)
+      - name: Terraform Plan
+        run: terraform plan
+
+      # Step 6: Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
