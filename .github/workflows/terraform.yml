@@ -7,31 +7,57 @@ on:
 
 jobs:
   terraform:
+    name: Terraform Pipeline
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repo
-      - name: Checkout Repository
+
+      # ---------------------------
+      # STEP 1 - Checkout Code
+      # ---------------------------
+      - name: 1️⃣ Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Install Terraform
-      - name: Setup Terraform
+      # ---------------------------
+      # STEP 2 - Install Terraform
+      # ---------------------------
+      - name: 2️⃣ Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      # Step 3: Authenticate to GCP
-      - name: Authenticate to GCP
+      # ---------------------------
+      # STEP 3 - Authenticate GCP
+      # ---------------------------
+      - name: 3️⃣ Authenticate to GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      # Step 4: Terraform Init (IMPORTANT CHANGE)
-      - name: Terraform Init
+      # ---------------------------
+      # STEP 4 - Terraform Init
+      # ---------------------------
+      - name: 4️⃣ Terraform Init
         run: terraform init -reconfigure
 
-      # Step 5: Terraform Plan (GOOD PRACTICE)
-      - name: Terraform Plan
+      # ---------------------------
+      # STEP 5 - Terraform Format Check
+      # ---------------------------
+      - name: 5️⃣ Terraform Format
+        run: terraform fmt -check
+
+      # ---------------------------
+      # STEP 6 - Terraform Validate
+      # ---------------------------
+      - name: 6️⃣ Terraform Validate
+        run: terraform validate
+
+      # ---------------------------
+      # STEP 7 - Terraform Plan
+      # ---------------------------
+      - name: 7️⃣ Terraform Plan
         run: terraform plan
 
-      # Step 6: Terraform Apply
-      - name: Terraform Apply
+      # ---------------------------
+      # STEP 8 - Terraform Apply
+      # ---------------------------
+      - name: 8️⃣ Terraform Apply
         run: terraform apply -auto-approve
